@@ -1,0 +1,185 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Inventory API",
+    "description": "Shopify Backend Developer Intern Challenge",
+    "contact": {
+      "name": "Charles Wong",
+      "email": "charleswonghm@gmail.com"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/item": {
+      "summary": "Performs basic operations on individual items",
+      "description": "Allows the client to create, delete, or edit individual inventory items",
+      "post": {
+        "summary": "Create a new inventory item",
+        "requestBody": {
+          "description": "The initial parameters to create the inventory item with",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response containing successfully created inventory item object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Edit an existing inventory item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the inventory item to edit",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the new details to edit to",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response containing successfully edited inventory item object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find item with ID 5"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an inventory item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the inventory item to edit",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Empty response on successful delete"
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find item with ID 5"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/item/get-all": {
+      "summary": "Get a list of all inventory items",
+      "get": {
+        "summary": "Get a list of all inventory items",
+        "responses": {
+          "200": {
+            "description": "A list of all inventory items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Item"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "id": 2,
+          "name": "trucks",
+          "count": 10
+        }
+      }
+    }
+  }
+}
