@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * This class describes a named collection of inventory items.
+ */
 @Entity
 public class Collection {
 
