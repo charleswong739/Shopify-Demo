@@ -87,9 +87,27 @@ public class ItemController {
     }
 
     /**
+     * Edit details of an inventory item. The ID of the item to edit must be provided in the payload, and the ID
+     * field is uneditable.
+     *
+     * @param payload the ItemPayload of the request
+     * @return the newly edited inventory item
+     * @throws ResourceNotFoundException if the provided ID does not match an existing item
+     */
+    @PutMapping("api/item/edit")
+    public Item editItem(@Validated(EditGroup.class) @RequestBody ItemPayload payload) throws ResourceNotFoundException {
+        return itemService.editItemName(payload.name, payload.id);
+    }
+
+    /**
      * Used to specify the validation strategies for create item
      */
     private interface CreateGroup { }
+
+    /**
+     * Used to specify the validation strategies for edit item
+     */
+    private interface EditGroup { }
 
     /**
      * This class defines all possible request payload parameters for endpoints in this controller. Through
@@ -100,6 +118,7 @@ public class ItemController {
         /**
          * ID of an item
          */
+        @NotNull(groups = EditGroup.class)
         private Long id;
 
         /**

@@ -28,7 +28,7 @@ public class ItemService {
      * <p>
      * Note that this constructor is automatically picked up by Spring for autowiring.
      *
-     * @param itemRepository  an ItemRepository instance to support this service
+     * @param itemRepository an ItemRepository instance to support this service
      */
     public ItemService(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
@@ -36,7 +36,7 @@ public class ItemService {
 
     /**
      * Create a new inventory item with the provided name.
-     *
+     * <p>
      * No checks are performed for duplicate item names. Created items are assigned a new unique ID.
      *
      * @param name the String name to create the inventory item with
@@ -70,10 +70,10 @@ public class ItemService {
     }
 
     /**
-     * Edit the name of an inventory item, specified by ID.
+     * Edit the name of an inventory item, specified by ID. If the given name is null, no change is made.
      *
      * @param name the String to edit the item's name to
-     * @param id a long representing the ID of the item to edit
+     * @param id   a long representing the ID of the item to edit
      * @return the newly edited item
      * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
      */
@@ -81,9 +81,13 @@ public class ItemService {
     public Item editItemName(String name, long id) throws ResourceNotFoundException {
         Item toEdit = findItemIfExists(id);
 
-        toEdit.setName(name);
+        if (name != null) {
+            toEdit.setName(name);
 
-        return itemRepository.save(toEdit);
+            return itemRepository.save(toEdit);
+        }
+
+        return toEdit;
     }
 
     /**
