@@ -12,4 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Charles Wong
  */
 public interface ItemRepository extends JpaRepository<Item, Long> {
+
+    Item findItemById(long id);
 }
