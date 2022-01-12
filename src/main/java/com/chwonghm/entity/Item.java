@@ -1,6 +1,7 @@
 package com.chwonghm.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -118,5 +119,49 @@ public class Item {
      */
     public void setCount(long count) {
         this.count = count;
+    }
+
+    /**
+     * Get the collections this item belongs to
+     *
+     * @return the Set of collections this item belongs to
+     */
+    public Set<Collection> getCollections() {
+        return collections;
+    }
+
+    /**
+     * Place this item in a collection. If the collection provided is one that
+     * this item is already in, no change occurs.
+     *
+     * @param collection the Collection to place this item in
+     */
+    public void addCollection(Collection collection) {
+        this.collections.add(collection);
+        collection.addItem(this);
+    }
+
+    /**
+     * Remove this item from a collection. If this item is not in the provided collection,
+     * no change occurs.
+     *
+     * @param collection the Collection to remove this item from
+     */
+    public void removeCollection(Collection collection) {
+        this.collections.remove(collection);
+        collection.removeItem(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return id == item.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
