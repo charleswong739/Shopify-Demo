@@ -51,15 +51,11 @@ public class ItemService {
      * Delete the inventory with the provided ID, if it exists
      *
      * @param id a long representing the ID of the inventory item to delete
-     * @throws Exception if the provided ID does not match an existing inventory item
+     * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
      */
     @Transactional
-    public void deleteItem(long id) throws Exception{
-        Item toDelete = itemRepository.findItemById(id);
-
-        if (toDelete == null) {
-            throw new ResourceNotFoundException(String.format("Could not find item with ID %d", id));
-        }
+    public void deleteItem(long id) throws ResourceNotFoundException {
+        Item toDelete = findItemIfExists(id);
 
         itemRepository.delete(toDelete);
     }
@@ -71,5 +67,39 @@ public class ItemService {
      */
     public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    /**
+     * Edit the name of an inventory item, specified by ID.
+     *
+     * @param name the String to edit the item's name to
+     * @param id a long representing the ID of the item to edit
+     * @return the newly edited item
+     * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
+     */
+    @Transactional
+    public Item editItemName(String name, long id) throws ResourceNotFoundException {
+        Item toEdit = findItemIfExists(id);
+
+        toEdit.setName(name);
+
+        return itemRepository.save(toEdit);
+    }
+
+    /**
+     * Find an inventory item by ID, if it exists. If not, an exception is thrown
+     *
+     * @param id a long representing the ID of the item to find
+     * @return the inventory item corresponding to the provided ID
+     * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
+     */
+    private Item findItemIfExists(long id) throws ResourceNotFoundException {
+        Item item = itemRepository.findItemById(id);
+
+        if (item == null) {
+            throw new ResourceNotFoundException(String.format("Could not find item with ID %d", id));
+        }
+
+        return item;
     }
 }
