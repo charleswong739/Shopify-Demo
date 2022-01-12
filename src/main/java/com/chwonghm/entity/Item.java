@@ -28,10 +28,11 @@ public class Item {
 
     /**
      * Construct an inventory item.
-     *
+     * <p>
      * Empty constructor required for Jackson serialization
      */
-    public Item() { }
+    public Item() {
+    }
 
     /**
      * Construct a named inventory item
