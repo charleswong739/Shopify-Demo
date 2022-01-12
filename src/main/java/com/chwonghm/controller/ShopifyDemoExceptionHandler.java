@@ -48,6 +48,16 @@ public class ShopifyDemoExceptionHandler extends ResponseEntityExceptionHandler 
                 e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    /**
+     * Handler for any ConstraintViolationException. This exception is thrown when a
+     * request input validation fails
+     * <p>
+     * Returns a 404 BAD_REQUEST with a formatted message detailing which validation failed.
+     *
+     * @param e       the ConstraintViolationException to be handled
+     * @param request the request which generated this exception
+     * @return a response with 404 BAD_REQUEST status
+     */
     @ExceptionHandler(value = {
             ConstraintViolationException.class
     })
@@ -56,7 +66,7 @@ public class ShopifyDemoExceptionHandler extends ResponseEntityExceptionHandler 
         StringBuilder builder = new StringBuilder(50);
 
         Iterator<ConstraintViolation<?>> it = e.getConstraintViolations().iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             ConstraintViolation<?> violation = it.next();
 
             String field = "";

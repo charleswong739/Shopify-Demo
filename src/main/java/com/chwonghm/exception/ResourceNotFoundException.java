@@ -9,7 +9,7 @@ package com.chwonghm.exception;
 public class ResourceNotFoundException extends Exception {
 
     /**
-     * Constructs a exception with some custom message.
+     * Constructs an exception with some custom message.
      *
      * @param msg the String message to initialize this exception with
      */

@@ -8,9 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.List;
 
 /**
@@ -48,12 +46,12 @@ public class ItemController {
 
     /**
      * Create a new inventory item with the information provided in the request payload.
-     *
+     * <p>
      * The following validation strategies apply:
      * <ul>
      *     <li>name must be provided</li>
      * </ul>
-     *
+     * <p>
      * id is ignored, whether it is provided or not.
      *
      * @param payload the ItemPayload of the request
@@ -104,12 +102,14 @@ public class ItemController {
     /**
      * Used to specify the validation strategies for create item
      */
-    private interface CreateGroup { }
+    private interface CreateGroup {
+    }
 
     /**
      * Used to specify the validation strategies for edit item
      */
-    private interface EditGroup { }
+    private interface EditGroup {
+    }
 
     /**
      * This class defines all possible request payload parameters for endpoints in this controller. Through
