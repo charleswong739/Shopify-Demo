@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class ItemController {
      *     <li>name must be provided</li>
      * </ul>
      * <p>
-     * id is ignored, whether it is provided or not.
+     * All other provided fields are ignored.
      *
      * @param payload the ItemPayload of the request
      * @return the newly created inventory item
@@ -96,7 +97,8 @@ public class ItemController {
     @PutMapping("api/item/edit")
     @Validated(EditGroup.class)
     public Item editItem(@Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
-        return itemService.editItemName(payload.name, payload.id);
+        itemService.editItemName(payload.name, payload.id);
+        return itemService.editItemCount(payload.count, payload.id);
     }
 
     /**
@@ -130,6 +132,12 @@ public class ItemController {
         private String name;
 
         /**
+         * Name of an item
+         */
+        @PositiveOrZero(groups = EditGroup.class)
+        private Long count;
+
+        /**
          * Set the ID field of the payload
          *
          * @param id the Long ID to set
@@ -145,6 +153,15 @@ public class ItemController {
          */
         public void setName(String name) {
             this.name = name;
+        }
+
+        /**
+         * Set the count field of the payload
+         *
+         * @param count the Long count to set
+         */
+        public void setCount(Long count) {
+            this.count = count;
         }
     }
 }

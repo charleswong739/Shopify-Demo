@@ -91,6 +91,25 @@ public class ItemService {
     }
 
     /**
+     * Edit the count of an inventory item, specified by ID. If the given count is null, no change is made.
+     *
+     * @param count the Long to edit the item's count to
+     * @param id   a long representing the ID of the item to edit
+     * @return the newly edited item
+     * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
+     */
+    @Transactional
+    public Item editItemCount(Long count, long id) throws ResourceNotFoundException {
+        Item toEdit = findItemIfExists(id);
+
+        if (count != null) {
+            toEdit.setCount(count);
+        }
+
+        return itemRepository.save((toEdit));
+    }
+
+    /**
      * Find an inventory item by ID, if it exists. If not, an exception is thrown
      *
      * @param id a long representing the ID of the item to find
