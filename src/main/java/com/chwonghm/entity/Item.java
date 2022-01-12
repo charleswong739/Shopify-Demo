@@ -1,9 +1,7 @@
 package com.chwonghm.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * This class defines an inventory item, which has its own unique numeric ID, as well as some string name.
@@ -18,6 +16,7 @@ public class Item {
      */
     @Id
     @GeneratedValue
+    @Column(name = "list_id")
     private long id;
 
     /**
@@ -30,6 +29,23 @@ public class Item {
      * The count of this inventory item
      */
     private long count;
+
+    /**
+     * The collections this item belongs to
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "item_collections",
+            joinColumns = @JoinColumn(
+                    name = "item_id",
+                    referencedColumnName = "list_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "collection_id",
+                    referencedColumnName = "collection_id"
+            )
+    )
+    private Set<Collection> collections;
 
     /**
      * Construct an inventory item.
