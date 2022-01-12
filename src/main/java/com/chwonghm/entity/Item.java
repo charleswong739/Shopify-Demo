@@ -27,11 +27,17 @@ public class Item {
     private String name;
 
     /**
+     * The count of this inventory item
+     */
+    private long count;
+
+    /**
      * Construct an inventory item.
      * <p>
      * Empty constructor required for Jackson serialization
      */
     public Item() {
+        count = 0L;
     }
 
     /**
@@ -41,6 +47,7 @@ public class Item {
      */
     public Item(String name) {
         this.name = name;
+        this.count = 0L;
     }
 
     /**
@@ -77,5 +84,23 @@ public class Item {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Get the count of this item
+     *
+     * @return the count of this item
+     */
+    public long getCount() {
+        return count;
+    }
+
+    /**
+     * Set the count of this item
+     *
+     * @param count a long to set the count of this item to
+     */
+    public void setCount(long count) {
+        this.count = count;
     }
 }
