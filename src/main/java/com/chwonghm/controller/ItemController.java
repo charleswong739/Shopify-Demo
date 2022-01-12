@@ -60,7 +60,8 @@ public class ItemController {
      * @return the newly created inventory item
      */
     @PostMapping("api/item/create")
-    public Item createItem(@Validated(CreateGroup.class) @RequestBody ItemPayload payload) {
+    @Validated(CreateGroup.class)
+    public Item createItem(@Valid @RequestBody ItemPayload payload) {
         return itemService.createItem(payload.name);
     }
 
@@ -95,7 +96,8 @@ public class ItemController {
      * @throws ResourceNotFoundException if the provided ID does not match an existing item
      */
     @PutMapping("api/item/edit")
-    public Item editItem(@Validated(EditGroup.class) @RequestBody ItemPayload payload) throws ResourceNotFoundException {
+    @Validated(EditGroup.class)
+    public Item editItem(@Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
         return itemService.editItemName(payload.name, payload.id);
     }
 
@@ -126,5 +128,23 @@ public class ItemController {
          */
         @NotNull(groups = CreateGroup.class)
         private String name;
+
+        /**
+         * Set the ID field of the payload
+         *
+         * @param id the Long ID to set
+         */
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        /**
+         * Set the name field of the payload
+         *
+         * @param name the String name to set
+         */
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }
