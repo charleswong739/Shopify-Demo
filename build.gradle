@@ -8,11 +8,11 @@ group 'com.chwonghm'
 version '1.0-SNAPSHOT'
 
 compileJava {
-    options.release = 17
+    options.release = 11
 }
 
 compileTestJava {
-    options.release = 17
+    options.release = 11
 }
 
 repositories {
