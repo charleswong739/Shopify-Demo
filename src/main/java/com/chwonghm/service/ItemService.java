@@ -6,6 +6,8 @@ import com.chwonghm.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * This is a service class providing all logic for inventory item related operations. It is responsible
  * for interfacing with repository interfaces to fetch/persist Item entities.
@@ -60,5 +62,14 @@ public class ItemService {
         }
 
         itemRepository.delete(toDelete);
+    }
+
+    /**
+     * Get a list of all saved inventory items
+     *
+     * @return a List of all inventory items
+     */
+    public List<Item> getAllItems() {
+        return itemRepository.findAll();
     }
 }
