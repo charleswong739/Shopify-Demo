@@ -1,5 +1,10 @@
 package com.chwonghm.entity;
 
+import com.chwonghm.controller.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -11,6 +16,8 @@ import java.util.Set;
  * @author Charles Wong
  */
 @Entity
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonView({ Views.Collection.class, Views.Item.class })
 public class Item {
 
     /**
@@ -47,6 +54,7 @@ public class Item {
                     referencedColumnName = "collection_id"
             )
     )
+    @JsonView(Views.Item.class)
     private Set<Collection> collections;
 
     /**

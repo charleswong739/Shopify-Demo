@@ -1,6 +1,10 @@
 package com.chwonghm.entity;
 
+import com.chwonghm.controller.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,6 +15,7 @@ import java.util.Set;
  * This class describes a named collection of inventory items.
  */
 @Entity
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public class Collection {
 
     /**
@@ -19,19 +24,21 @@ public class Collection {
     @Id
     @GeneratedValue
     @Column(name = "collection_id")
+    @JsonView({ Views.Collection.class, Views.Item.class })
     private long id;
 
     /**
      * The name of this collection
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
+    @JsonView({ Views.Collection.class, Views.Item.class })
     private String name;
 
     /**
      * The grocery items in this collection
      */
-    @JsonIgnore
     @ManyToMany(mappedBy = "collections")
+    @JsonView(Views.Collection.class)
     private Set<Item> items;
 
     /**
