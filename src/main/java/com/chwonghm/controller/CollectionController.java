@@ -8,8 +8,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -47,21 +49,30 @@ public class CollectionController {
     }
 
     @JsonView(Views.Collection.class)
+    @Validated(CreateGroup.class)
     @PostMapping("api/collection")
-    public Collection createCollection(@RequestBody CollectionPayload payload) {
+    public Collection createCollection(@Valid @RequestBody CollectionPayload payload) {
         return this.collectionService.createCollection(payload.name);
     }
 
     @JsonView(Views.Item.class)
+    @Validated(EditCollectionGroup.class)
     @PutMapping("api/item/collection")
-    public Item addCollection(@RequestParam("id") long id, @RequestBody CollectionPayload payload) throws ResourceNotFoundException {
+    public Item addCollection(@RequestParam("id") long id, @Valid @RequestBody CollectionPayload payload) throws ResourceNotFoundException {
         return this.collectionService.addCollectionToItem(payload.collectionIds, id);
     }
 
     @JsonView(Views.Item.class)
+    @Validated(EditCollectionGroup.class)
     @DeleteMapping("api/item/collection")
-    public Item removeCollection(@RequestParam("id") long id, @RequestBody CollectionPayload payload) throws ResourceNotFoundException {
+    public Item removeCollection(@RequestParam("id") long id, @Valid @RequestBody CollectionPayload payload) throws ResourceNotFoundException {
         return this.collectionService.removeCollectionFromItem(payload.collectionIds, id);
+    }
+
+    private interface CreateGroup {
+    }
+
+    private interface EditCollectionGroup {
     }
 
     /**
@@ -73,8 +84,10 @@ public class CollectionController {
         /**
          * Name of an item
          */
+        @NotNull(groups = CreateGroup.class)
         private String name;
 
+        @NotNull(groups = EditCollectionGroup.class)
         private List<Long> collectionIds;
 
         /**
