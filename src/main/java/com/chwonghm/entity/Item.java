@@ -1,6 +1,7 @@
 package com.chwonghm.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -51,10 +52,9 @@ public class Item {
     /**
      * Construct an inventory item.
      * <p>
-     * Empty constructor required for Jackson serialization
+     * Empty constructor required for Jackson deserialization
      */
     public Item() {
-        count = 0L;
     }
 
     /**
@@ -65,6 +65,7 @@ public class Item {
     public Item(String name) {
         this.name = name;
         this.count = 0L;
+        this.collections = new HashSet<>();
     }
 
     /**
@@ -150,6 +151,19 @@ public class Item {
     public void removeCollection(Collection collection) {
         this.collections.remove(collection);
         collection.removeItem(this);
+    }
+
+    /**
+     * Remove this item from all collections it belongs to.
+     *
+     * Called automatically by Hibernate before deletion of this item in order to
+     * maintain database relations.
+     */
+    @PreRemove
+    void clearItemFromCollections() {
+        for (Collection col : this.collections) {
+            col.removeItem(this);
+        }
     }
 
     @Override

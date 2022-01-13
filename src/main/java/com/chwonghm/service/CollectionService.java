@@ -46,18 +46,61 @@ public class CollectionService {
         this.collectionRepository = collectionRepository;
     }
 
+    /**
+     * Create and persist a new inventory collection
+     *
+     * @param name the String name of the new collection
+     * @return the newly created collection
+     */
     @Transactional
-    public Item addCollectionToItem(long collectionId, long itemId) throws ResourceNotFoundException {
-        Collection col = findCollectionIfExists(collectionRepository, collectionId);
-        Item item = findItemIfExists(itemRepository, itemId);
-
-        item.addCollection(col);
-
-        return itemRepository.save(item);
+    public Collection createCollection(String name) {
+        return collectionRepository.save(new Collection(name));
     }
 
+    /**
+     * Delete the collection with the given ID
+     *
+     * @param id a long representing the ID of the collection to delete
+     * @throws ResourceNotFoundException if the provided ID does not match an existing collection
+     */
     @Transactional
-    public Item addCollectionsToItem(List<Long> collectionIds, long itemId) throws ResourceNotFoundException {
+    public void deleteCollection(long id) throws ResourceNotFoundException {
+        Collection col = findCollectionIfExists(collectionRepository, id);
+        collectionRepository.delete(col);
+    }
+
+    /**
+     * Get a collection, specified by ID
+     *
+     * @param id a long representing the ID of the collection to get
+     * @return the collection corresponding to the provided ID
+     * @throws ResourceNotFoundException if the provided ID does not match an existing collection
+     */
+    public Collection getCollection(long id) throws ResourceNotFoundException {
+        return findCollectionIfExists(collectionRepository, id);
+    }
+
+    /**
+     * Get a list of all saved collections
+     *
+     * @return a List of all saved collections
+     */
+    public List<Collection> getAllCollections() {
+        return collectionRepository.findAll();
+    }
+
+    /**
+     * Add collections to an item. Both the collections and the item are specified by ID. Duplicate
+     * collection IDs are allowed; in this case, the collection is only added to the item once. All IDs provided
+     * must exist, otherwise no change is made to the item.
+     *
+     * @param collectionIds a List of longs representing the IDs of the collections to add
+     * @param itemId a long representing the ID of the item to be edited
+     * @return the newly edited item
+     * @throws ResourceNotFoundException if the provided IDs do not match existing data entries
+     */
+    @Transactional
+    public Item addCollectionToItem(List<Long> collectionIds, long itemId) throws ResourceNotFoundException {
         Item item = findItemIfExists(itemRepository, itemId);
 
         for (long collectionId : collectionIds) {
@@ -69,24 +112,26 @@ public class CollectionService {
         return itemRepository.save(item);
     }
 
+    /**
+     * Remove collections from an item. Both the collections and the item are specified by ID. Duplicate
+     * collection IDs are allowed; in this case, the collection is removed from the item as expected. All IDs provided
+     * must exist, otherwise no change is made to the item.
+     *
+     * @param collectionIds a List of longs representing the IDs of the collections to remove
+     * @param itemId a long representing the ID of the item to be edited
+     * @return the newly edited item
+     * @throws ResourceNotFoundException if the provided IDs do not match existing data entries
+     */
     @Transactional
-    public Item removeCollectionFromItem(long collectionId, long itemId) throws ResourceNotFoundException {
-        Collection col = findCollectionIfExists(collectionRepository, collectionId);
+    public Item removeCollectionFromItem(List<Long> collectionIds, long itemId) throws ResourceNotFoundException {
         Item item = findItemIfExists(itemRepository, itemId);
 
-        item.removeCollection(col);
-
-        return itemRepository.save(item);
-    }
-
-    @Transactional
-    public Item clearCollectionsFromItem(long itemId) throws ResourceNotFoundException {
-        Item item = findItemIfExists(itemRepository, itemId);
-
-        for (Collection col : item.getCollections()) {
+        for (long collectionId : collectionIds) {
+            Collection col = findCollectionIfExists(collectionRepository, collectionId);
             item.removeCollection(col);
         }
 
+        // if an exception is thrown above, no changes are saved
         return itemRepository.save(item);
     }
 }

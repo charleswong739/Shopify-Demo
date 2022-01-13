@@ -3,6 +3,7 @@ package com.chwonghm.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -32,6 +33,24 @@ public class Collection {
     @JsonIgnore
     @ManyToMany(mappedBy = "collections")
     private Set<Item> items;
+
+    /**
+     * Construct an inventory collection.
+     * <p>
+     * Empty constructor required for Jackson deserialization
+     */
+    public Collection() {
+    }
+
+    /**
+     * Create a named inventory collection
+     *
+     * @param name the String name to initialize this collection with
+     */
+    public Collection(String name) {
+        this.name = name;
+        this.items = new HashSet<>();
+    }
 
     /**
      * Get the ID of this collection
@@ -96,6 +115,19 @@ public class Collection {
      */
     void removeItem(Item item) {
         this.items.remove(item);
+    }
+
+    /**
+     * Remove this collection from all items it contains.
+     *
+     * Called automatically by Hibernate before deletion of this item in order to
+     * maintain database relations.
+     */
+    @PreRemove
+    void removeCollectionFromItems() {
+        for (Item item : this.items) {
+            item.removeCollection(this);
+        }
     }
 
     @Override
