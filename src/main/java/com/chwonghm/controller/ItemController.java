@@ -59,7 +59,7 @@ public class ItemController {
      * @param payload the ItemPayload of the request
      * @return the newly created inventory item
      */
-    @PostMapping("api/item/create")
+    @PostMapping("api/item")
     @Validated(CreateGroup.class)
     @JsonView(Views.Item.class)
     public Item createItem(@Valid @RequestBody ItemPayload payload) {
@@ -72,7 +72,7 @@ public class ItemController {
      * @param id a long representing the ID of the item to delete
      * @throws ResourceNotFoundException if the provided ID does not match an existing item
      */
-    @DeleteMapping("api/item/delete")
+    @DeleteMapping("api/item")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @JsonView(Views.Item.class)
     public void deleteList(@RequestParam("id") long id) throws ResourceNotFoundException {
@@ -104,12 +104,12 @@ public class ItemController {
      * @return the newly edited inventory item
      * @throws ResourceNotFoundException if the provided ID does not match an existing item
      */
-    @PutMapping("api/item/edit")
+    @PutMapping("api/item")
     @Validated(EditGroup.class)
     @JsonView(Views.Item.class)
-    public Item editItem(@Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
-        itemService.editItemName(payload.name, payload.id);
-        return itemService.editItemCount(payload.count, payload.id);
+    public Item editItem(@RequestParam("id") long id, @Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
+        itemService.editItemName(payload.name, id);
+        return itemService.editItemCount(payload.count, id);
     }
 
     /**
@@ -131,12 +131,6 @@ public class ItemController {
     private static class ItemPayload {
 
         /**
-         * ID of an item
-         */
-        @NotNull(groups = EditGroup.class)
-        private Long id;
-
-        /**
          * Name of an item
          */
         @NotNull(groups = CreateGroup.class)
@@ -147,15 +141,6 @@ public class ItemController {
          */
         @PositiveOrZero(groups = EditGroup.class)
         private Long count;
-
-        /**
-         * Set the ID field of the payload
-         *
-         * @param id the Long ID to set
-         */
-        public void setId(Long id) {
-            this.id = id;
-        }
 
         /**
          * Set the name field of the payload
