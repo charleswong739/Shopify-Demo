@@ -71,6 +71,10 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
+    public Item getItem(long id) throws ResourceNotFoundException {
+        return findItemIfExists(itemRepository, id);
+    }
+
     /**
      * Edit the name of an inventory item, specified by ID. If the given name is null, no change is made.
      *

@@ -3,6 +3,7 @@ package com.chwonghm.controller;
 import com.chwonghm.entity.Item;
 import com.chwonghm.exception.ResourceNotFoundException;
 import com.chwonghm.service.ItemService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
- * Spring REST controller defining endpoints related to grocery list management. The following
+ * Spring REST controller defining endpoints related to inventory item management. The following
  * endpoints are defined:
  * <ul>
  *     <li>api/item/create</li>
@@ -34,7 +35,7 @@ public class ItemController {
     private final ItemService itemService;
 
     /**
-     * Constructs this grocery controller given an ItemService.
+     * Constructs this item controller given an ItemService.
      * <p>
      * Note that by default, Spring will attempt to autowire the only
      * constructor of a class.
@@ -60,6 +61,7 @@ public class ItemController {
      */
     @PostMapping("api/item/create")
     @Validated(CreateGroup.class)
+    @JsonView(Views.Item.class)
     public Item createItem(@Valid @RequestBody ItemPayload payload) {
         return itemService.createItem(payload.name);
     }
@@ -72,6 +74,7 @@ public class ItemController {
      */
     @DeleteMapping("api/item/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @JsonView(Views.Item.class)
     public void deleteList(@RequestParam("id") long id) throws ResourceNotFoundException {
         itemService.deleteItem(id);
     }
@@ -82,8 +85,15 @@ public class ItemController {
      * @return a List of all stored inventory items
      */
     @GetMapping("api/item/get-all")
+    @JsonView(Views.Item.class)
     public List<Item> getAllItems() {
         return itemService.getAllItems();
+    }
+
+    @GetMapping("api/item")
+    @JsonView(Views.Item.class)
+    public Item getItem(@RequestParam("id") long id) throws ResourceNotFoundException {
+        return itemService.getItem(id);
     }
 
     /**
@@ -96,6 +106,7 @@ public class ItemController {
      */
     @PutMapping("api/item/edit")
     @Validated(EditGroup.class)
+    @JsonView(Views.Item.class)
     public Item editItem(@Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
         itemService.editItemName(payload.name, payload.id);
         return itemService.editItemCount(payload.count, payload.id);
