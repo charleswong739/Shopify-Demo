@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.chwonghm.service.ServiceUtils.findItemIfExists;
+
 /**
  * This is a service class providing all logic for inventory item related operations. It is responsible
  * for interfacing with repository interfaces to fetch/persist Item entities.
@@ -24,7 +26,7 @@ public class ItemService {
     private ItemRepository itemRepository;
 
     /**
-     * Constructs a UserService, injecting all requires dependencies.
+     * Constructs an ItemService, injecting all requires dependencies.
      * <p>
      * Note that this constructor is automatically picked up by Spring for autowiring.
      *
@@ -55,7 +57,7 @@ public class ItemService {
      */
     @Transactional
     public void deleteItem(long id) throws ResourceNotFoundException {
-        Item toDelete = findItemIfExists(id);
+        Item toDelete = findItemIfExists(itemRepository, id);
 
         itemRepository.delete(toDelete);
     }
@@ -69,6 +71,10 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
+    public Item getItem(long id) throws ResourceNotFoundException {
+        return findItemIfExists(itemRepository, id);
+    }
+
     /**
      * Edit the name of an inventory item, specified by ID. If the given name is null, no change is made.
      *
@@ -79,7 +85,7 @@ public class ItemService {
      */
     @Transactional
     public Item editItemName(String name, long id) throws ResourceNotFoundException {
-        Item toEdit = findItemIfExists(id);
+        Item toEdit = findItemIfExists(itemRepository, id);
 
         if (name != null) {
             toEdit.setName(name);
@@ -100,29 +106,12 @@ public class ItemService {
      */
     @Transactional
     public Item editItemCount(Long count, long id) throws ResourceNotFoundException {
-        Item toEdit = findItemIfExists(id);
+        Item toEdit = findItemIfExists(itemRepository, id);
 
         if (count != null) {
             toEdit.setCount(count);
         }
 
         return itemRepository.save((toEdit));
-    }
-
-    /**
-     * Find an inventory item by ID, if it exists. If not, an exception is thrown
-     *
-     * @param id a long representing the ID of the item to find
-     * @return the inventory item corresponding to the provided ID
-     * @throws ResourceNotFoundException if the provided ID does not match an existing inventory item
-     */
-    private Item findItemIfExists(long id) throws ResourceNotFoundException {
-        Item item = itemRepository.findItemById(id);
-
-        if (item == null) {
-            throw new ResourceNotFoundException(String.format("Could not find item with ID %d", id));
-        }
-
-        return item;
     }
 }

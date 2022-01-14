@@ -3,6 +3,7 @@ package com.chwonghm.controller;
 import com.chwonghm.entity.Item;
 import com.chwonghm.exception.ResourceNotFoundException;
 import com.chwonghm.service.ItemService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +14,16 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
- * Spring REST controller defining endpoints related to grocery list management. The following
+ * Spring REST controller defining endpoints related to inventory item management. The following
  * endpoints are defined:
  * <ul>
- *     <li>api/item/create</li>
- *     <li>api/item/delete</li>
- *     <li>api/item/edit</li>
- *     <li>api/item/get-all</li>
+ *     <li>api/item</li>
+ *     <li>api/item/all</li>
  * </ul>
  *
  * @author Charles Wong
  */
+@CrossOrigin
 @RestController
 @Validated
 public class ItemController {
@@ -34,7 +34,7 @@ public class ItemController {
     private final ItemService itemService;
 
     /**
-     * Constructs this grocery controller given an ItemService.
+     * Constructs this item controller given an ItemService.
      * <p>
      * Note that by default, Spring will attempt to autowire the only
      * constructor of a class.
@@ -58,8 +58,9 @@ public class ItemController {
      * @param payload the ItemPayload of the request
      * @return the newly created inventory item
      */
-    @PostMapping("api/item/create")
+    @PostMapping("api/item")
     @Validated(CreateGroup.class)
+    @JsonView(Views.Item.class)
     public Item createItem(@Valid @RequestBody ItemPayload payload) {
         return itemService.createItem(payload.name);
     }
@@ -70,7 +71,7 @@ public class ItemController {
      * @param id a long representing the ID of the item to delete
      * @throws ResourceNotFoundException if the provided ID does not match an existing item
      */
-    @DeleteMapping("api/item/delete")
+    @DeleteMapping("api/item")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteList(@RequestParam("id") long id) throws ResourceNotFoundException {
         itemService.deleteItem(id);
@@ -81,9 +82,16 @@ public class ItemController {
      *
      * @return a List of all stored inventory items
      */
-    @GetMapping("api/item/get-all")
+    @GetMapping("api/item/all")
+    @JsonView(Views.Item.class)
     public List<Item> getAllItems() {
         return itemService.getAllItems();
+    }
+
+    @GetMapping("api/item")
+    @JsonView(Views.Item.class)
+    public Item getItem(@RequestParam("id") long id) throws ResourceNotFoundException {
+        return itemService.getItem(id);
     }
 
     /**
@@ -94,11 +102,12 @@ public class ItemController {
      * @return the newly edited inventory item
      * @throws ResourceNotFoundException if the provided ID does not match an existing item
      */
-    @PutMapping("api/item/edit")
+    @PutMapping("api/item")
     @Validated(EditGroup.class)
-    public Item editItem(@Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
-        itemService.editItemName(payload.name, payload.id);
-        return itemService.editItemCount(payload.count, payload.id);
+    @JsonView(Views.Item.class)
+    public Item editItem(@RequestParam("id") long id, @Valid @RequestBody ItemPayload payload) throws ResourceNotFoundException {
+        itemService.editItemName(payload.name, id);
+        return itemService.editItemCount(payload.count, id);
     }
 
     /**
@@ -120,12 +129,6 @@ public class ItemController {
     private static class ItemPayload {
 
         /**
-         * ID of an item
-         */
-        @NotNull(groups = EditGroup.class)
-        private Long id;
-
-        /**
          * Name of an item
          */
         @NotNull(groups = CreateGroup.class)
@@ -136,15 +139,6 @@ public class ItemController {
          */
         @PositiveOrZero(groups = EditGroup.class)
         private Long count;
-
-        /**
-         * Set the ID field of the payload
-         *
-         * @param id the Long ID to set
-         */
-        public void setId(Long id) {
-            this.id = id;
-        }
 
         /**
          * Set the name field of the payload

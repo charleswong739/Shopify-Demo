@@ -1,9 +1,14 @@
 package com.chwonghm.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.chwonghm.controller.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This class defines an inventory item, which has its own unique numeric ID, as well as some string name.
@@ -11,6 +16,8 @@ import javax.persistence.Id;
  * @author Charles Wong
  */
 @Entity
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonView({ Views.Collection.class, Views.Item.class })
 public class Item {
 
     /**
@@ -18,6 +25,7 @@ public class Item {
      */
     @Id
     @GeneratedValue
+    @Column(name = "list_id")
     private long id;
 
     /**
@@ -32,12 +40,29 @@ public class Item {
     private long count;
 
     /**
+     * The collections this item belongs to
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "item_collections",
+            joinColumns = @JoinColumn(
+                    name = "item_id",
+                    referencedColumnName = "list_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "collection_id",
+                    referencedColumnName = "collection_id"
+            )
+    )
+    @JsonView(Views.Item.class)
+    private Set<Collection> collections;
+
+    /**
      * Construct an inventory item.
      * <p>
-     * Empty constructor required for Jackson serialization
+     * Empty constructor required for Jackson deserialization
      */
     public Item() {
-        count = 0L;
     }
 
     /**
@@ -48,6 +73,7 @@ public class Item {
     public Item(String name) {
         this.name = name;
         this.count = 0L;
+        this.collections = new HashSet<>();
     }
 
     /**
@@ -102,5 +128,62 @@ public class Item {
      */
     public void setCount(long count) {
         this.count = count;
+    }
+
+    /**
+     * Get the collections this item belongs to
+     *
+     * @return the Set of collections this item belongs to
+     */
+    public Set<Collection> getCollections() {
+        return collections;
+    }
+
+    /**
+     * Place this item in a collection. If the collection provided is one that
+     * this item is already in, no change occurs.
+     *
+     * @param collection the Collection to place this item in
+     */
+    public void addCollection(Collection collection) {
+        this.collections.add(collection);
+        collection.addItem(this);
+    }
+
+    /**
+     * Remove this item from a collection. If this item is not in the provided collection,
+     * no change occurs.
+     *
+     * @param collection the Collection to remove this item from
+     */
+    public void removeCollection(Collection collection) {
+        this.collections.remove(collection);
+        collection.removeItem(this);
+    }
+
+    /**
+     * Remove this item from all collections it belongs to.
+     *
+     * Called automatically by Hibernate before deletion of this item in order to
+     * maintain database relations.
+     */
+    @PreRemove
+    void clearItemFromCollections() {
+        for (Collection col : this.collections) {
+            col.removeItem(this);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return id == item.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
