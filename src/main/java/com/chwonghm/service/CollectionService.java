@@ -8,7 +8,9 @@ import com.chwonghm.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.chwonghm.service.ServiceUtils.findCollectionIfExists;
 import static com.chwonghm.service.ServiceUtils.findItemIfExists;
@@ -103,8 +105,14 @@ public class CollectionService {
     public Item addCollectionToItem(List<Long> collectionIds, long itemId) throws ResourceNotFoundException {
         Item item = findItemIfExists(itemRepository, itemId);
 
+        Set<Collection> toAdd = new HashSet<>();
+
         for (long collectionId : collectionIds) {
             Collection col = findCollectionIfExists(collectionRepository, collectionId);
+            toAdd.add(col);
+        }
+
+        for (Collection col : toAdd) {
             item.addCollection(col);
         }
 
@@ -126,8 +134,14 @@ public class CollectionService {
     public Item removeCollectionFromItem(List<Long> collectionIds, long itemId) throws ResourceNotFoundException {
         Item item = findItemIfExists(itemRepository, itemId);
 
+        Set<Collection> toRemove = new HashSet<>();
+
         for (long collectionId : collectionIds) {
             Collection col = findCollectionIfExists(collectionRepository, collectionId);
+            toRemove.add(col);
+        }
+
+        for (Collection col : toRemove) {
             item.removeCollection(col);
         }
 
