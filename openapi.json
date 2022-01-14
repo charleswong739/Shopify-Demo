@@ -9,10 +9,54 @@
     },
     "version": "1.0"
   },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
   "paths": {
     "/api/item": {
       "summary": "Performs basic operations on individual items",
       "description": "Allows the client to create, delete, or edit individual inventory items",
+      "get": {
+        "summary": "Fetch an inventory item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID of the inventory item to fetch",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response containing successfully fetched inventory item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find item with ID 5"
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Create a new inventory item",
         "requestBody": {
@@ -155,6 +199,233 @@
           }
         }
       }
+    },
+    "/api/collection": {
+      "summary": "Perform operations for individual collections",
+      "get": {
+        "summary": "Get details about a collection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response containing successfully fetched collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find collection with ID 5"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new collection",
+        "requestBody": {
+          "description": "The initial parameters for the new collection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response containing successfully created collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/item/collection": {
+      "summary": "Perform operations related to an item's collections",
+      "put": {
+        "summary": "Place an item in collections",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the collections to place the inventory item in",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "collectionIds"
+                ],
+                "properties": {
+                  "collectionIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Response containing edited inventory item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find collection with ID 5"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove collections from an inventory item",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the collections to remove the inventory item from",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "collectionIds"
+                ],
+                "properties": {
+                  "collectionIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200":{
+            "description": "Response containing edited inventory item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find collection with ID 5"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collection/all": {
+      "get": {
+        "summary": "Get an overview of all created collections",
+        "responses": {
+          "200": {
+            "description": "Response containing overview of all created collections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "default": "Collection"
+                      },
+                      "id": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -162,6 +433,10 @@
       "Item": {
         "type": "object",
         "properties": {
+          "type": {
+            "type": "string",
+            "default": "Item"
+          },
           "id": {
             "type": "integer",
             "minimum": 1
@@ -172,12 +447,91 @@
           "count": {
             "type": "integer",
             "minimum": 0
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "default": "Collection"
+                },
+                "id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
           }
         },
         "example": {
+          "type": "Item",
           "id": 2,
-          "name": "trucks",
-          "count": 10
+          "name": "apples",
+          "count": 10,
+          "collections": [
+            {
+              "type": "Collection",
+              "id": 1,
+              "name": "fruits"
+            }
+          ]
+        }
+      },
+      "Collection": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "Collection"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "default": "Collection"
+                },
+                "id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "name": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "Collection",
+          "id": 2,
+          "name": "fruits",
+          "items": [
+            {
+              "type": "Item",
+              "id": 3,
+              "name": "apple",
+              "count": 15
+            }
+          ]
         }
       }
     }
