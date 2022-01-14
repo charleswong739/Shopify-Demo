@@ -23,7 +23,9 @@ import java.util.List;
  *
  * @author Charles Wong
  */
+@CrossOrigin
 @RestController
+@Validated
 public class CollectionController {
 
     /**

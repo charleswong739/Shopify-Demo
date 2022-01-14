@@ -472,7 +472,7 @@
           "type": "Item",
           "id": 2,
           "name": "apples",
-          "count": 10,
+          "count": 0,
           "collections": [
             {
               "type": "Collection",
@@ -503,7 +503,7 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "default": "Collection"
+                  "default": "Item"
                 },
                 "id": {
                   "type": "integer",
@@ -529,7 +529,7 @@
               "type": "Item",
               "id": 3,
               "name": "apple",
-              "count": 15
+              "count": 0
             }
           ]
         }
