@@ -200,79 +200,6 @@
         }
       }
     },
-    "/api/collection": {
-      "summary": "Perform operations for individual collections",
-      "get": {
-        "summary": "Get details about a collection",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Response containing successfully fetched collection",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Collection"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "A string response detailing what was not found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Could not find collection with ID 5"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new collection",
-        "requestBody": {
-          "description": "The initial parameters for the new collection",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "name"
-                ],
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Response containing successfully created collection",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Collection"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/item/collection": {
       "summary": "Perform operations related to an item's collections",
       "put": {
@@ -379,6 +306,109 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find collection with ID 5"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collection": {
+      "summary": "Perform operations for individual collections",
+      "get": {
+        "summary": "Get details about a collection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response containing successfully fetched collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "A string response detailing what was not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Could not find collection with ID 5"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new collection",
+        "requestBody": {
+          "description": "The initial parameters for the new collection",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response containing successfully created collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a collection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Empty response on successful delete"
           },
           "404": {
             "description": "A string response detailing what was not found",

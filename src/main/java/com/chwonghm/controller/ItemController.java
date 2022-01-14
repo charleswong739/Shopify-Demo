@@ -73,7 +73,6 @@ public class ItemController {
      */
     @DeleteMapping("api/item")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @JsonView(Views.Item.class)
     public void deleteList(@RequestParam("id") long id) throws ResourceNotFoundException {
         itemService.deleteItem(id);
     }

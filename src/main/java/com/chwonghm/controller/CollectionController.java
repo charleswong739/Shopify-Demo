@@ -5,6 +5,7 @@ import com.chwonghm.entity.Item;
 import com.chwonghm.exception.ResourceNotFoundException;
 import com.chwonghm.service.CollectionService;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,6 +81,12 @@ public class CollectionController {
     @PostMapping("api/collection")
     public Collection createCollection(@Valid @RequestBody CollectionPayload payload) {
         return this.collectionService.createCollection(payload.name);
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @DeleteMapping("api/collection")
+    public void deleteCollection(@RequestParam("id") long id) throws ResourceNotFoundException {
+        this.collectionService.deleteCollection(id);
     }
 
     /**
