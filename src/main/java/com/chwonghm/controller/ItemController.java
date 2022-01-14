@@ -17,10 +17,8 @@ import java.util.List;
  * Spring REST controller defining endpoints related to inventory item management. The following
  * endpoints are defined:
  * <ul>
- *     <li>api/item/create</li>
- *     <li>api/item/delete</li>
- *     <li>api/item/edit</li>
- *     <li>api/item/get-all</li>
+ *     <li>api/item</li>
+ *     <li>api/item/all</li>
  * </ul>
  *
  * @author Charles Wong
@@ -84,7 +82,7 @@ public class ItemController {
      *
      * @return a List of all stored inventory items
      */
-    @GetMapping("api/item/get-all")
+    @GetMapping("api/item/all")
     @JsonView(Views.Item.class)
     public List<Item> getAllItems() {
         return itemService.getAllItems();

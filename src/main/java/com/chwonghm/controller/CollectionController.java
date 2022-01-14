@@ -5,17 +5,24 @@ import com.chwonghm.entity.Item;
 import com.chwonghm.exception.ResourceNotFoundException;
 import com.chwonghm.service.CollectionService;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+/**
+ * Spring REST controller defining endpoints related to inventory collection management. The following
+ * endpoints are defined:
+ * <ul>
+ *     <li>api/collection</li>
+ *     <li>api/collection/all</li>
+ *     <li>api/item/collection</li>
+ * </ul>
+ *
+ * @author Charles Wong
+ */
 @RestController
 public class CollectionController {
 
@@ -36,18 +43,36 @@ public class CollectionController {
         this.collectionService = collectionService;
     }
 
+    /**
+     * Get all saved collections
+     *
+     * @return a List of all saved collections
+     */
     @JsonView(Views.Item.class)
     @GetMapping("api/collection/all")
     public List<Collection> getAllCollections() {
         return this.collectionService.getAllCollections();
     }
 
+    /**
+     * Get a collection by ID.
+     *
+     * @param id a long representing the ID of the collection to fetch
+     * @return the collection with the corresponding ID
+     * @throws ResourceNotFoundException if the provided ID does not match an existing collection
+     */
     @JsonView(Views.Collection.class)
     @GetMapping("api/collection")
     public Collection getCollection(@RequestParam("id") long id) throws ResourceNotFoundException {
         return this.collectionService.getCollection(id);
     }
 
+    /**
+     * Create a new collection, and initialize using details provided with the payload
+     *
+     * @param payload the CollectionPayload provided with the request
+     * @return the newly created Collection
+     */
     @JsonView(Views.Collection.class)
     @Validated(CreateGroup.class)
     @PostMapping("api/collection")
@@ -55,6 +80,15 @@ public class CollectionController {
         return this.collectionService.createCollection(payload.name);
     }
 
+    /**
+     * Place an item in collections, by specifying an item ID, and providing a list of collection IDs in
+     * the request body. All provided IDs must match existing data entries, otherwise no changes are made.
+     *
+     * @param id a long representing the ID of the item to place in collections
+     * @param payload the CollectionPayload provided with the request
+     * @return the newly edited inventory Item
+     * @throws ResourceNotFoundException if any provided ID does not match existing data entries
+     */
     @JsonView(Views.Item.class)
     @Validated(EditCollectionGroup.class)
     @PutMapping("api/item/collection")
@@ -62,6 +96,17 @@ public class CollectionController {
         return this.collectionService.addCollectionToItem(payload.collectionIds, id);
     }
 
+    /**
+     * Remove an inventory item from collections by specifying an item ID, and providing a list of collection IDs in
+     * the request body. All provided IDs must match existing data entries, otherwise no changes are made.
+     * Providing collection IDs that do not contain the inventory item is allowed; in this case the returned item
+     * will simply continue to not be in that collection.
+     *
+     * @param id  a long representing the ID of the item to remove from collections
+     * @param payload the CollectionPayload provided with the request
+     * @return the newly edited inventory Item
+     * @throws ResourceNotFoundException if any provided ID does not match existing data entries
+     */
     @JsonView(Views.Item.class)
     @Validated(EditCollectionGroup.class)
     @DeleteMapping("api/item/collection")
@@ -69,9 +114,15 @@ public class CollectionController {
         return this.collectionService.removeCollectionFromItem(payload.collectionIds, id);
     }
 
+    /**
+     * Used to specify the validation strategies for create collection
+     */
     private interface CreateGroup {
     }
 
+    /**
+     * Used to specify the validation strategies for edit item's collection
+     */
     private interface EditCollectionGroup {
     }
 
@@ -82,11 +133,14 @@ public class CollectionController {
     private static class CollectionPayload {
 
         /**
-         * Name of an item
+         * Name of an collection
          */
         @NotNull(groups = CreateGroup.class)
         private String name;
 
+        /**
+         * A list of collection IDs to add/remove
+         */
         @NotNull(groups = EditCollectionGroup.class)
         private List<Long> collectionIds;
 
@@ -99,6 +153,11 @@ public class CollectionController {
             this.name = name;
         }
 
+        /**
+         * Set the collectionIds field of the payload
+         *
+         * @param collectionIds a List of longs to set
+         */
         public void setCollectionIds(List<Long> collectionIds) {
             this.collectionIds = collectionIds;
         }

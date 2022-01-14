@@ -179,7 +179,7 @@
         }
       }
     },
-    "/api/item/get-all": {
+    "/api/item/all": {
       "summary": "Get a list of all inventory items",
       "get": {
         "summary": "Get a list of all inventory items",
