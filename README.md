@@ -23,3 +23,8 @@ Alternatively, clone the repository, and use the `bootRun` Gradle task to automa
 ## API documentation
 
 API documentation can be found [here](https://charleswong739.github.io/). CORS is enabled, meaning API calls can be made directly from the documentation page (use the "Try it out" buttons) while the application is running. 
+
+
+## Database
+
+This application uses a file-based database running in create-drop mode for convenience. This means that data is not persisted between runs of the application, only through a single run. You can fully delete created files by deleting the `data` directory automatically created in your working directory.
